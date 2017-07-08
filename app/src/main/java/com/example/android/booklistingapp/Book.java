@@ -3,12 +3,12 @@ package com.example.android.booklistingapp;
 public class Book {
 
     private String mTitle;
-    private String mAuthor;
-    private String mCategory;
+    private StringBuilder mAuthor;
+    private StringBuilder mCategory;
     private String mDescription;
     private String mUrl;
 
-    public Book(String title, String author, String category, String description, String url){
+    public Book(String title, StringBuilder author, StringBuilder category, String description, String url){
         mTitle = title;
         mAuthor = author;
         mCategory = category;
@@ -20,11 +20,11 @@ public class Book {
         return mTitle;
     }
 
-    public String getAuthor(){
+    public StringBuilder getAuthor(){
         return mAuthor;
     }
 
-    public String getCategory(){
+    public StringBuilder getCategory(){
         return mCategory;
     }
 

@@ -34,11 +34,11 @@ public class BookAdapter extends ArrayAdapter<Book> {
         descriptionTextView.setText(description);
 
         TextView categoryTextView = (TextView) listItemView.findViewById(R.id.category_text);
-        String category = currentBook.getCategory();
+        StringBuilder category = currentBook.getCategory();
         categoryTextView.setText(category);
 
         TextView authorTextView = (TextView) listItemView.findViewById(R.id.author_text);
-        String author = currentBook.getAuthor();
+        StringBuilder author = currentBook.getAuthor();
         authorTextView.setText(author);
 
 

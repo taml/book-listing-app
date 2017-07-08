@@ -3,4 +3,7 @@
 
     <string name="search_title">Search Title</string>
     <string name="search_prompt">Search term e.g art</string>
+
+    <string name="no_internet">No Connection :(</string>
+    <string name="no_books">No Books :(</string>
 </resources>
