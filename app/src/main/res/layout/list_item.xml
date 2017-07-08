@@ -7,6 +7,7 @@
     android:paddingRight="@dimen/xsmall"
     android:paddingStart="@dimen/xsmall"
     android:layout_marginTop="@dimen/small"
+    android:layout_marginBottom="@dimen/small"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 

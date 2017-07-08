@@ -8,7 +8,6 @@ import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -20,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +40,7 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
     private String fullQueryURL;
     private TextView mEmptyTextView;
     private ProgressBar mProgressView;
+    private ArrayList<Book> bookArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +52,12 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         // Find a reference to the {@link ListView} in the layout
         ListView bookListView = (ListView) findViewById(R.id.list);
 
-        Parcelable state = bookListView.onSaveInstanceState();
-
         // Create a new adapter that takes an empty list of books as input
-        mAdapter = new BookAdapter(this, new ArrayList<Book>());
+        mAdapter = new BookAdapter(this, bookArrayList);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         bookListView.setAdapter(mAdapter);
-
-        bookListView.onRestoreInstanceState(state);
 
         // Set a custom message when there are no list items
         mEmptyTextView = (TextView) findViewById(R.id.empty_view_text);
@@ -96,7 +91,8 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-        if (activeNetwork != null && activeNetwork.isConnected()) {
+        boolean isOnline = activeNetwork != null && activeNetwork.isConnected();
+        if (isOnline && bookArrayList.isEmpty()) {
 
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
@@ -115,8 +111,6 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim().replaceAll("\\s+", "");
             fullQueryURL = GOOGLE_BOOKS_URL + query + MAX_RESULTS;
-            getLoaderManager().restartLoader(BOOK_LOADER_ID, null, this);
-
             Log.v(LOG_TAG, "Search Q: " + query);
         }
     }
@@ -134,22 +128,8 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
-//        searchView.setOnQueryTextListener(this);
-
-
         return true;
     }
-
-//    @Override
-//    public boolean onQueryTextSubmit(String query) {
-////        getLoaderManager().restartLoader(BOOK_LOADER_ID, null, this);
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onQueryTextChange(String newText) {
-//        return false;
-//    }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
