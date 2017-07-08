@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -24,20 +25,21 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListingActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>>{
+public class ListingActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
 
     public static final String LOG_TAG = ListingActivity.class.getName();
     // URL for book data from the Google books api
     private static final String GOOGLE_BOOKS_URL = "https://www.googleapis.com/books/v1/volumes?q=";
     // Adapter for the list of books
     private BookAdapter mAdapter;
+    // Set a max result of 20 books
+    private static final String MAX_RESULTS = "&maxResults=20";
     // Constant value for the book loader ID.
     private static final int BOOK_LOADER_ID = 11;
     // Query result
-    private String query = "art";
+    private String query;
     // Full query URL
-    private String fullQueryURL = GOOGLE_BOOKS_URL + query;
-
+    private String fullQueryURL;
     private TextView mEmptyTextView;
     private ProgressBar mProgressView;
 
@@ -51,12 +53,16 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         // Find a reference to the {@link ListView} in the layout
         ListView bookListView = (ListView) findViewById(R.id.list);
 
+        Parcelable state = bookListView.onSaveInstanceState();
+
         // Create a new adapter that takes an empty list of books as input
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         bookListView.setAdapter(mAdapter);
+
+        bookListView.onRestoreInstanceState(state);
 
         // Set a custom message when there are no list items
         mEmptyTextView = (TextView) findViewById(R.id.empty_view_text);
@@ -107,10 +113,10 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            query = intent.getStringExtra(SearchManager.QUERY).trim();
-            if (query.contains(" ")){
-                Toast.makeText(ListingActivity.this, "Search query should consist of one single term, e.g craft or science. Please try another search.", Toast.LENGTH_LONG).show();
-            }
+            query = intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim().replaceAll("\\s+", "");
+            fullQueryURL = GOOGLE_BOOKS_URL + query + MAX_RESULTS;
+            getLoaderManager().restartLoader(BOOK_LOADER_ID, null, this);
+
             Log.v(LOG_TAG, "Search Q: " + query);
         }
     }
@@ -128,9 +134,22 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
+//        searchView.setOnQueryTextListener(this);
+
 
         return true;
     }
+
+//    @Override
+//    public boolean onQueryTextSubmit(String query) {
+////        getLoaderManager().restartLoader(BOOK_LOADER_ID, null, this);
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean onQueryTextChange(String newText) {
+//        return false;
+//    }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
