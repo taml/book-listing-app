@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListingActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
+public class ListingActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>>, SearchView.OnQueryTextListener {
 
     public static final String LOG_TAG = ListingActivity.class.getName();
     // URL for book data from the Google books api
@@ -38,9 +39,13 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
     private String query;
     // Full query URL
     private String fullQueryURL;
+    private ImageView mBookImage;
     private TextView mEmptyTextView;
     private ProgressBar mProgressView;
     private ArrayList<Book> bookArrayList = new ArrayList<>();
+    ConnectivityManager cm;
+    NetworkInfo activeNetwork;
+    boolean isOnline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +64,12 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         // so the list can be populated in the user interface
         bookListView.setAdapter(mAdapter);
 
+        mBookImage = (ImageView) findViewById(R.id.book_image);
+
         // Set a custom message when there are no list items
         mEmptyTextView = (TextView) findViewById(R.id.empty_view_text);
-        bookListView.setEmptyView(mEmptyTextView);
+        View emptyLayoutView = findViewById(R.id.empty_layout_view);
+        bookListView.setEmptyView(emptyLayoutView);
 
         mProgressView = (ProgressBar) findViewById(R.id.progress);
 
@@ -87,11 +95,11 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         // Get a reference to the LoaderManager, in order to interact with loaders.
         LoaderManager loaderManager = getLoaderManager();
 
-        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        activeNetwork = cm.getActiveNetworkInfo();
 
-        boolean isOnline = activeNetwork != null && activeNetwork.isConnected();
+        isOnline = activeNetwork != null && activeNetwork.isConnected();
         if (isOnline && bookArrayList.isEmpty()) {
 
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
@@ -101,6 +109,7 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
             Log.i(LOG_TAG, "Loader on init");
         } else {
             mProgressView.setVisibility(View.GONE);
+            mBookImage.setVisibility(View.GONE);
             mEmptyTextView.setText(R.string.no_internet);
         }
 
@@ -128,7 +137,23 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
+        searchView.setOnQueryTextListener(this);
+
         return true;
+    }
+
+    // Check there is still connection when a query is submitted
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        if(!isOnline){
+            mEmptyTextView.setText(R.string.no_internet);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     @Override
@@ -161,4 +186,5 @@ public class ListingActivity extends AppCompatActivity implements LoaderManager.
         Log.i(LOG_TAG, "Loader on reset");
         mAdapter.clear();
     }
+
 }

@@ -59,8 +59,13 @@
             android:layout_gravity="start"
             android:textColor="@color/secondaryText"
             android:textSize="@dimen/font_xsmall"
-            android:layout_marginBottom="@dimen/xsmall"
+            android:layout_marginBottom="@dimen/small"
             tools:text="Routledge" />
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/colorAccent"
+            android:layout_height="@dimen/divider"/>
 
     </LinearLayout>
 
@@ -74,6 +79,19 @@
         android:layout_marginEnd="@dimen/small"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/firstLetter"
+            android:textColor="@android:color/white"
+            android:paddingTop="@dimen/small"
+            android:paddingBottom="@dimen/small"
+            android:paddingLeft="@dimen/medium"
+            android:paddingRight="@dimen/medium"
+            android:background="@color/colorAccent"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold"
+            android:fontFamily="serif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

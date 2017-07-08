@@ -2,8 +2,8 @@
     <string name="app_name">Book Listing App</string>
 
     <string name="search_title">Search Title</string>
-    <string name="search_prompt">Search term e.g art</string>
+    <string name="search_prompt">Search term e.g Alice in Wonderland</string>
 
-    <string name="no_internet">No Connection :(</string>
-    <string name="no_books">No Books :(</string>
+    <string name="no_internet">No Connection!</string>
+    <string name="no_books">No Books!\nSearch for a word or phrase</string>
 </resources>

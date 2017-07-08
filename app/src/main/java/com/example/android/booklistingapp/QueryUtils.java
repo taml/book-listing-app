@@ -66,7 +66,10 @@ public final class QueryUtils {
                 JSONObject volumeInfo = currentItem.getJSONObject("volumeInfo");
 
                 // Extract the value for the key called "title"
-                String title = volumeInfo.getString("title");
+                String title = "No title";
+                if (volumeInfo.has("title")) {
+                    title = volumeInfo.getString("title");
+                }
 
                 // Extract authors JSONArray associated with the key called "authors"
                 // which may represents a list of authors of the book
@@ -84,12 +87,18 @@ public final class QueryUtils {
                 }
 
                 // Extract the value for the key called "description"
-                String description = volumeInfo.getString("description");
+                String description = "No Description";
+                if (volumeInfo.has("description")) {
+                    description = volumeInfo.getString("description");
+                }
 
                 // Extract categories JSONArray associated with the key called "categories"
                 // which may represents a list of authors of the book
                 JSONArray categoriesArray;
                 StringBuilder categories = new StringBuilder();
+                String firstCategory = "";
+                char firstLetter = 'n';
+                String firstLetterAsString = "N";
                 if (volumeInfo.has("categories")) {
                     categoriesArray = volumeInfo.getJSONArray("categories");
                     // List each item in the categories array
@@ -97,8 +106,15 @@ public final class QueryUtils {
                         categories.append(System.getProperty("line.separator"));
                         categories.append(categoriesArray.getString(k));
                     }
+                    firstCategory = categoriesArray.get(0).toString().toLowerCase();
+                    Log.v(LOG_TAG, "First Category: " + firstCategory);
+                    firstLetter = firstCategory.charAt(0);
+                    Log.v(LOG_TAG, "First Category Letter: " + firstLetter);
+                    firstLetterAsString = String.valueOf(firstLetter).toUpperCase();
+                    Log.v(LOG_TAG, "First Category Letter String: " + firstLetterAsString);
                 } else {
                     categories.append("No Category");
+                    firstCategory = "No Category";
                 }
 
                 // Extract the value for the key called "canonicalVolumeLink"
@@ -109,7 +125,7 @@ public final class QueryUtils {
 
                 // Create a new {@link Book} object with the title, location, description,
                 // and url from the JSON response.
-                Book book = new Book(title, authors, categories, description, url);
+                Book book = new Book(title, authors, categories, firstLetterAsString, description, url);
 
                 // Add the new {@link Book} to the list of books.
                 books.add(book);

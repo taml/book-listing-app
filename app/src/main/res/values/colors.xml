@@ -6,4 +6,33 @@
 
     <color name="secondaryText">#78909C</color>
     <color name="primaryText">#424242</color>
+    <color name="colorBackground">#ECEFF1</color>
+
+    <color name="a">#E91E63</color>
+    <color name="b">#E02367</color>
+    <color name="c">#D7296B</color>
+    <color name="d">#CE2F70</color>
+    <color name="e">#C53574</color>
+    <color name="f">#BC3B78</color>
+    <color name="g">#B3417D</color>
+    <color name="h">#AA4781</color>
+    <color name="i">#A14D85</color>
+    <color name="j">#98538A</color>
+    <color name="k">#8F598E</color>
+    <color name="l">#865F92</color>
+    <color name="m">#7D6597</color>
+    <color name="n">#746B9B</color>
+    <color name="o">#6B709F</color>
+    <color name="p">#6276A4</color>
+    <color name="q">#597CA8</color>
+    <color name="r">#5082AC</color>
+    <color name="s">#4788B1</color>
+    <color name="t">#3E8EB5</color>
+    <color name="u">#3594B9</color>
+    <color name="v">#2C9ABE</color>
+    <color name="w">#23A0C2</color>
+    <color name="x">#1AA6C6</color>
+    <color name="y">#11ACCB</color>
+    <color name="z">#08B2CF</color>
+    <color name="defaultColor">#08B2CF</color>
 </resources>
