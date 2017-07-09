@@ -52,83 +52,88 @@ public final class QueryUtils {
 
             // Extract the JSONArray associated with the key called "items",
             // which represents a list of volume info (or books).
-            JSONArray itemsArray = baseJsonResponse.getJSONArray("items");
+            JSONArray itemsArray = null;
+            if (baseJsonResponse.has("items")) {
+                itemsArray = baseJsonResponse.getJSONArray("items");
 
-            // For each book / item in the itemArray, create an {@link Book} object
-            for (int i = 0; i < itemsArray.length(); i++) {
 
-                // Get a single book /item at position i within the list of books
-                JSONObject currentItem = itemsArray.getJSONObject(i);
+                // For each book / item in the itemArray, create an {@link Book} object
+                for (int i = 0; i < itemsArray.length(); i++) {
 
-                // For a given book /item, extract the JSONObject associated with the
-                // key called "properties", which represents a list of all properties
-                // for that earthquake.
-                JSONObject volumeInfo = currentItem.getJSONObject("volumeInfo");
+                    // Get a single book /item at position i within the list of books
+                    JSONObject currentItem = itemsArray.getJSONObject(i);
 
-                // Extract the value for the key called "title"
-                String title = "No title";
-                if (volumeInfo.has("title")) {
-                    title = volumeInfo.getString("title");
-                }
+                    // For a given book /item, extract the JSONObject associated with the
+                    // key called "properties", which represents a list of all properties
+                    // for that earthquake.
+                    JSONObject volumeInfo = currentItem.getJSONObject("volumeInfo");
 
-                // Extract authors JSONArray associated with the key called "authors"
-                // which may represents a list of authors of the book
-                JSONArray authorsArray;
-                StringBuilder authors = new StringBuilder();
-                if (volumeInfo.has("authors")) {
-                    authorsArray = volumeInfo.getJSONArray("authors");
-                    // List each item in the authors array
-                    for (int j = 0; j < authorsArray.length(); j++) {
-                        authors.append(System.getProperty("line.separator"));
-                        authors.append(authorsArray.getString(j));
+                    // Extract the value for the key called "title"
+                    String title = "No title";
+                    if (volumeInfo.has("title")) {
+                        title = volumeInfo.getString("title");
                     }
-                } else {
-                    authors.append("No Author");
-                }
 
-                // Extract the value for the key called "description"
-                String description = "No Description";
-                if (volumeInfo.has("description")) {
-                    description = volumeInfo.getString("description");
-                }
-
-                // Extract categories JSONArray associated with the key called "categories"
-                // which may represents a list of authors of the book
-                JSONArray categoriesArray;
-                StringBuilder categories = new StringBuilder();
-                String firstCategory = "";
-                char firstLetter = 'n';
-                String firstLetterAsString = "N";
-                if (volumeInfo.has("categories")) {
-                    categoriesArray = volumeInfo.getJSONArray("categories");
-                    // List each item in the categories array
-                    for (int k = 0; k < categoriesArray.length(); k++) {
-                        categories.append(System.getProperty("line.separator"));
-                        categories.append(categoriesArray.getString(k));
+                    // Extract authors JSONArray associated with the key called "authors"
+                    // which may represents a list of authors of the book
+                    JSONArray authorsArray;
+                    StringBuilder authors = new StringBuilder();
+                    if (volumeInfo.has("authors")) {
+                        authorsArray = volumeInfo.getJSONArray("authors");
+                        // List each item in the authors array
+                        for (int j = 0; j < authorsArray.length(); j++) {
+                            authors.append(System.getProperty("line.separator"));
+                            authors.append(authorsArray.getString(j));
+                        }
+                    } else {
+                        authors.append("No Author");
                     }
-                    firstCategory = categoriesArray.get(0).toString().toLowerCase();
-                    Log.v(LOG_TAG, "First Category: " + firstCategory);
-                    firstLetter = firstCategory.charAt(0);
-                    Log.v(LOG_TAG, "First Category Letter: " + firstLetter);
-                    firstLetterAsString = String.valueOf(firstLetter).toUpperCase();
-                    Log.v(LOG_TAG, "First Category Letter String: " + firstLetterAsString);
-                } else {
-                    categories.append("No Category");
-                    firstCategory = "No Category";
+
+                    // Extract the value for the key called "description"
+                    String description = "No Description";
+                    if (volumeInfo.has("description")) {
+                        description = volumeInfo.getString("description");
+                    }
+
+                    // Extract categories JSONArray associated with the key called "categories"
+                    // which may represents a list of authors of the book
+                    JSONArray categoriesArray;
+                    StringBuilder categories = new StringBuilder();
+                    String firstCategory = "";
+                    char firstLetter = 'n';
+                    String firstLetterAsString = "N";
+                    if (volumeInfo.has("categories")) {
+                        categoriesArray = volumeInfo.getJSONArray("categories");
+                        // List each item in the categories array
+                        for (int k = 0; k < categoriesArray.length(); k++) {
+                            categories.append(System.getProperty("line.separator"));
+                            categories.append(categoriesArray.getString(k));
+                        }
+                        firstCategory = categoriesArray.get(0).toString().toLowerCase();
+                        Log.v(LOG_TAG, "First Category: " + firstCategory);
+                        firstLetter = firstCategory.charAt(0);
+                        Log.v(LOG_TAG, "First Category Letter: " + firstLetter);
+                        firstLetterAsString = String.valueOf(firstLetter).toUpperCase();
+                        Log.v(LOG_TAG, "First Category Letter String: " + firstLetterAsString);
+                    } else {
+                        categories.append("No Category");
+                        firstCategory = "No Category";
+                    }
+
+                    // Extract the value for the key called "canonicalVolumeLink"
+                    String url = "https://books.google.co.uk";
+                    if (volumeInfo.has("canonicalVolumeLink")) {
+                        url = volumeInfo.getString("canonicalVolumeLink");
+                    }
+
+
+                    // Create a new {@link Book} object with the title, location, description,
+                    // and url from the JSON response.
+                    Book book = new Book(title, authors, categories, firstLetterAsString, description, url);
+
+                    // Add the new {@link Book} to the list of books.
+                    books.add(book);
                 }
-
-                // Extract the value for the key called "canonicalVolumeLink"
-                String url = "https://books.google.co.uk";
-                if (volumeInfo.has("canonicalVolumeLink")) {
-                    url = volumeInfo.getString("canonicalVolumeLink");
-                }
-
-                // Create a new {@link Book} object with the title, location, description,
-                // and url from the JSON response.
-                Book book = new Book(title, authors, categories, firstLetterAsString, description, url);
-
-                // Add the new {@link Book} to the list of books.
-                books.add(book);
             }
 
         } catch (JSONException e) {
